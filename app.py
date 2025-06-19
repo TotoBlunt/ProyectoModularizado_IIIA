@@ -23,6 +23,7 @@ nombre_user = st.text_input('Nombre del usuario')
 cargo_user = st.text_input('Cargo del usuario')
 if not nombre_user or not cargo_user:
     st.warning('Por favor, ingrese su nombre y cargo para continuar.')
+
 col1, col2 = st.columns(2)
 with col1:
     areaAn = st.selectbox('Área de la granja', list(AREA_MAP.keys()))
@@ -39,34 +40,46 @@ datos_prediccion = {
     'edadventa': edadventa
 }
 
-
 input_data = [[datos_prediccion['areaAn'], datos_prediccion['sexo'], 
-                datos_prediccion['edadHTs'], datos_prediccion['edadventa']]]
-#Crear lista vacia
-predicciones=[]
+              datos_prediccion['edadHTs'], datos_prediccion['edadventa']]]
+
+# Inicializar variable predicciones como None
+predicciones = None
+
 # Botón para realizar todas las predicciones
 if st.button('Realizar todas las predicciones'):
     # Realizar predicciones
     predicciones = predict_all(input_data)
-
+    st.success("Predicciones realizadas correctamente!")
+    
+    # Mostrar resultados
+    if predicciones is not None:
+        st.write("Resultados de las predicciones:")
+        st.dataframe(predicciones)
 else:
     st.info('Ingrese los datos y haga clic en el botón para realizar las predicciones.')
-    
-#Datos para guardar en la base de datos
-#Tranformar dataframe predicciones a diccionario
-datos_predicciones = predicciones.to_dict(orient='records')[0]
-datos_ingresados = {
-    'nombre': nombre_user,
-    'cargo': cargo_user,
-    'areaGranja': areaAn,
-    'sexo': sexo,   
-    'EdadSacrificio': edadHTs,
-    'EdadVenta': edadventa
-}
-#Concatenar los diccionarios
-datos_supabase = {**datos_ingresados, **datos_predicciones}
 
-    
-if st.button('Guardar predicciones'):
-    # Guardar las predicciones en la base de datos
-    crear_prediccion(datos_supabase)
+# Botón para guardar predicciones (solo visible si hay predicciones)
+if predicciones is not None:
+    if st.button('Guardar predicciones'):
+        # Transformar dataframe predicciones a diccionario
+        datos_predicciones = predicciones.to_dict(orient='records')[0]
+        datos_ingresados = {
+            'nombre': nombre_user,
+            'cargo': cargo_user,
+            'areaGranja': areaAn,
+            'sexo': sexo,   
+            'EdadSacrificio': edadHTs,
+            'EdadVenta': edadventa
+        }
+        # Concatenar los diccionarios
+        datos_supabase = {**datos_ingresados, **datos_predicciones}
+        
+        # Guardar las predicciones en la base de datos
+        try:
+            crear_prediccion(datos_supabase)
+            st.success("Predicciones guardadas correctamente en la base de datos!")
+        except Exception as e:
+            st.error(f"Error al guardar las predicciones: {str(e)}")
+else:
+    st.warning("Realice las predicciones primero antes de intentar guardar.")
