@@ -71,13 +71,13 @@ if st.session_state.predicciones is not None:
             'edadventa': edadventa
         }
         # Concatenar los diccionarios
-        datos_supabase = {**datos_ingresados, **datos_predichos}
+        #datos_supabase = {**datos_ingresados, **datos_predichos}
         st.write("Datos a guardar:", datos_predichos,datos_ingresados)
         # Guardar las predicciones en la base de datos
-        try:
-            crear_prediccion(datos_supabase)
+        #try:
+            #crear_prediccion(datos_supabase)
             #st.success("Predicciones guardadas correctamente en la base de datos!")
-        except Exception as e:
-            st.error(f"Error al guardar las predicciones: {str(e)}")
+        #except Exception as e:
+            #st.error(f"Error al guardar las predicciones: {str(e)}")
 else:
     st.info('Ingrese los datos y haga clic en "Realizar todas las predicciones"')
