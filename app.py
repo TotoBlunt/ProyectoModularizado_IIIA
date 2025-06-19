@@ -5,6 +5,10 @@ from xgboost import XGBRegressor
 from utils.predicciones import predict_all
 from utils.CRUD import crear_prediccion
 
+# Configuración inicial de session state
+if 'predicciones' not in st.session_state:
+    st.session_state.predicciones = None
+
 # Configuración de la aplicación
 st.title('Predicción de Parámetros Avícolas')
 st.subheader('Predicciones de Mortalidad, Consumo, ICA y Peso Promedio Final')
@@ -43,27 +47,21 @@ datos_prediccion = {
 input_data = [[datos_prediccion['areaAn'], datos_prediccion['sexo'], 
               datos_prediccion['edadHTs'], datos_prediccion['edadventa']]]
 
-# Inicializar variable predicciones como None
-predicciones = None
-
 # Botón para realizar todas las predicciones
 if st.button('Realizar todas las predicciones'):
     # Realizar predicciones
-    predicciones = predict_all(input_data)
+    st.session_state.predicciones = predict_all(input_data)
     st.success("Predicciones realizadas correctamente!")
     
-    # Mostrar resultados
-    if predicciones is not None:
-        st.write("Resultados de las predicciones:")
-        st.dataframe(predicciones)
-else:
-    st.info('Ingrese los datos y haga clic en el botón para realizar las predicciones.')
-
-# Botón para guardar predicciones (solo visible si hay predicciones)
-if predicciones is not None:
+# Mostrar resultados si existen
+if st.session_state.predicciones is not None:
+    st.write("Resultados de las predicciones:")
+    st.dataframe(st.session_state.predicciones)
+    
+    # Botón para guardar predicciones
     if st.button('Guardar predicciones'):
         # Transformar dataframe predicciones a diccionario
-        datos_predicciones = predicciones.to_dict(orient='records')[0]
+        datos_predicciones = st.session_state.predicciones.to_dict(orient='records')[0]
         datos_ingresados = {
             'nombre': nombre_user,
             'cargo': cargo_user,
@@ -82,4 +80,4 @@ if predicciones is not None:
         except Exception as e:
             st.error(f"Error al guardar las predicciones: {str(e)}")
 else:
-    st.warning("Realice las predicciones primero antes de intentar guardar.")
+    st.info('Ingrese los datos y haga clic en "Realizar todas las predicciones"')
