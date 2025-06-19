@@ -69,11 +69,11 @@ if st.session_state.predicciones is not None:
             'sexo': sexo,   
             'edadHTs': edadHTs,
             'edadventa': edadventa,
-            'prePorcMort': datos_predichos[0],
-            'prePorcCon': datos_predichos[1],
-            'preICA': datos_predichos[2],
-            'prePeProFin': datos_predichos[3]
-            
+            'prePorcMort': datos_predichos[0][1],
+            'prePorcCon': datos_predichos[1][1],
+            'preICA': datos_predichos[2][1],
+            'prePeProFin': datos_predichos[3][1]
+
         }
         # Concatenar los diccionarios
         #datos_supabase = {**datos_ingresados, **datos_predichos}
