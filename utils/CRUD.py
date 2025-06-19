@@ -4,6 +4,7 @@ import os
 import streamlit as st
 import json
 from supabase import create_client, Client
+import pandas as pd
 
 Client = init_supabase()
 
@@ -33,14 +34,53 @@ def crear_prediccion(predicction_data):
     except Exception as e:
         st.error(e)
 
-def verificar_registros():
-    """Verifica si hay al menos un registro en la tabla 'datos_predicciones'."""
+def ver_predicciones_guardadas():
+    """
+    Muestra las predicciones almacenadas en Supabase en formato de tabla
+    """
+    
+    # 1. Consulta a la base de datos
     try:
-        response = Client.table('predicciones').select('*').limit(1).execute()
-        return len(response.data) > 0
+        response = Client.table('predicciones').select("*").order("created_at", desc=True).execute()
+        
+        if not response.data:
+            st.warning("No hay predicciones almacenadas aún")
+            return
+        
+        # 3. Convertir a DataFrame y formatear
+        df = pd.DataFrame(response.data)
+        
+        # Formatear columnas numéricas a 4 decimales
+        columnas_numericas = ['prePorcMort', 'prePorcCon', 'preICA', 'prePeProFin']
+        for col in columnas_numericas:
+            if col in df.columns:
+                df[col] = df[col].round(2)
+        
+        # 4. Mostrar en Streamlit
+        st.subheader("📊 Predicciones Guardadas")
+        st.dataframe(
+            df,
+            use_container_width=True,
+            column_config={
+                "created_at": st.column_config.DatetimeColumn("Fecha creación"),
+                "prePorcMort": "Mortalidad (%)",
+                "prePorcCon": "Consumo (%)",
+                "preICA": "ICA",
+                "prePeProFin": "Peso Final (kg)"
+            }
+        )
+        
+        # 5. Opción para descargar
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            "⬇️ Descargar datos",
+            data=csv,
+            file_name="predicciones_avicolas.csv",
+            mime="text/csv"
+        )
+        
     except Exception as e:
-        st.error(f"Ocurrió un error al verificar los registros: {e}")
-        return False
+        st.error(f"Error al cargar predicciones: {str(e)}")
 
 def listar_registros():
     st.subheader('Registros:')
