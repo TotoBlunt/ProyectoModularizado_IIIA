@@ -45,7 +45,7 @@ datos_prediccion = {
 }
 
 input_data = [[datos_prediccion['areaAn'], datos_prediccion['sexo'], 
-              datos_prediccion['edadHTs'], datos_prediccion['edadventa']]]
+            datos_prediccion['edadHTs'], datos_prediccion['edadventa']]]
 
 # Botón para realizar todas las predicciones
 if st.button('Realizar todas las predicciones'):
@@ -65,10 +65,10 @@ if st.session_state.predicciones is not None:
         datos_ingresados = {
             'nombre': nombre_user,
             'cargo': cargo_user,
-            'areaGranja': areaAn,
+            'areaAn': areaAn,
             'sexo': sexo,   
-            'EdadSacrificio': edadHTs,
-            'EdadVenta': edadventa
+            'edadHTs': edadHTs,
+            'edadventa': edadventa
         }
         # Concatenar los diccionarios
         datos_supabase = {**datos_ingresados, **datos_predicciones}
@@ -76,7 +76,7 @@ if st.session_state.predicciones is not None:
         # Guardar las predicciones en la base de datos
         try:
             crear_prediccion(datos_supabase)
-            st.success("Predicciones guardadas correctamente en la base de datos!")
+            #st.success("Predicciones guardadas correctamente en la base de datos!")
         except Exception as e:
             st.error(f"Error al guardar las predicciones: {str(e)}")
 else:

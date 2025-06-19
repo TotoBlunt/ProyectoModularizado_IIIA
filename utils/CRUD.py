@@ -11,11 +11,11 @@ def crear_prediccion(predicction_data):
     try:
         
         # Convertir el diccionario a JSON
-        json_data = json.loads(predicction_data)  # json.dumps crea el formato correcto
+        #json_data = json.loads(predicction_data)  # json.dumps crea el formato correcto
         #st.write("Datos en formato JSON_loads:", json_data)
 
         # Insertar datos en Supabase
-        response = Client.table('predicciones').insert(json_data).execute()
+        response = Client.table('predicciones').insert(predicction_data).execute()
 
         # Mostrar la respuesta completa para depuración (opcional)
         #st.write("Respuesta de Supabase:", response)
@@ -29,7 +29,7 @@ def crear_prediccion(predicction_data):
             st.error("Respuesta inesperada de Supabase")
 
     except Exception as e:
-        st.error(f"Guardando....")
+        st.error(e)
 
 def verificar_registros():
     """Verifica si hay al menos un registro en la tabla 'datos_predicciones'."""
