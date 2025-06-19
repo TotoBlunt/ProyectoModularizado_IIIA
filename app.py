@@ -68,11 +68,16 @@ if st.session_state.predicciones is not None:
             'areaAn': areaAn,
             'sexo': sexo,   
             'edadHTs': edadHTs,
-            'edadventa': edadventa
+            'edadventa': edadventa,
+            'prePorcMort': datos_predichos[0]['prePorcMort'],
+            'prePorcCon': datos_predichos[1]['prePorcCon'],
+            'preICA': datos_predichos[2]['preICA'],
+            'prePeProFin': datos_predichos[3]['prePeProFin']
+            
         }
         # Concatenar los diccionarios
         #datos_supabase = {**datos_ingresados, **datos_predichos}
-        st.write("Datos a guardar:", datos_predichos,datos_ingresados)
+        st.write("Datos a guardar:", datos_ingresados)
         # Guardar las predicciones en la base de datos
         #try:
             #crear_prediccion(datos_supabase)
