@@ -61,7 +61,7 @@ if st.session_state.predicciones is not None:
     # Botón para guardar predicciones
     if st.button('Guardar predicciones'):
         # Transformar dataframe predicciones a diccionario
-        datos_predichos = st.session_state.predicciones.to_dict(orient='records')[0]
+        datos_predichos = st.session_state.predicciones.to_dict(orient='records')
         datos_ingresados = {
             'nombre': nombre_user,
             'cargo': cargo_user,
