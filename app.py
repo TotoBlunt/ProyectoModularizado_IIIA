@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from xgboost import XGBRegressor
 from utils.predicciones import predict_all
+from utils.CRUD import crear_prediccion
 
 # Configuración de la aplicación
 st.title('Predicción de Parámetros Avícolas')
@@ -50,9 +51,10 @@ if st.button('Realizar todas las predicciones'):
 else:
     st.info('Ingrese los datos y haga clic en el botón para realizar las predicciones.')
     
-    
 #Datos para guardar en la base de datos
-datos_supabase = {
+#Tranformar dataframe predicciones a diccionario
+datos_predicciones = predicciones.to_dict(orient='records')[0]
+datos_ingresados = {
     'nombre': nombre_user,
     'cargo': cargo_user,
     'areaGranja': areaAn,
@@ -60,9 +62,10 @@ datos_supabase = {
     'EdadSacrificio': edadHTs,
     'EdadVenta': edadventa
 }
+#Concatenar los diccionarios
+datos_supabase = {**datos_ingresados, **datos_predicciones}
+
     
 if st.button('Guardar predicciones'):
     # Guardar las predicciones en la base de datos
-    st.subheader('Guardando predicciones...')
-    st.success('Predicciones guardadas exitosamente.')
-# Mostrar las predicciones
+    crear_prediccion(datos_supabase)
