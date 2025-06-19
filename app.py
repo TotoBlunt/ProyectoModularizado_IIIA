@@ -41,7 +41,7 @@ datos_prediccion = {
 
 
 input_data = [[datos_prediccion['areaAn'], datos_prediccion['sexo'], 
-                datos_prediccion['edadHTs'], datos_prediccion['edadventa']]]¨
+                datos_prediccion['edadHTs'], datos_prediccion['edadventa']]]
 #Crear lista vacia
 predicciones=[]
 # Botón para realizar todas las predicciones
