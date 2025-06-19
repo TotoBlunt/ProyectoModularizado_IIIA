@@ -63,6 +63,7 @@ if st.session_state.predicciones is not None:
     if st.button('Guardar predicciones'):
         # Transformar dataframe predicciones a diccionario
         datos_predichos = formatear_valores(st.session_state.predicciones.to_dict(orient='records'))
+        #Colocar valores manualmente a las predicciones ya que por dafault la clave sale Valor
         datos_ingresados = {
             'nombre': nombre_user,
             'cargo': cargo_user,
@@ -77,7 +78,7 @@ if st.session_state.predicciones is not None:
 
         }
         
-        st.write("Datos a guardar:", datos_ingresados)
+        st.write("Datos a guardar:", datos_ingresados, datos_predichos)
         # Guardar las predicciones en la base de datos
         try:
             crear_prediccion(datos_ingresados)
