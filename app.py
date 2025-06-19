@@ -86,7 +86,7 @@ if st.session_state.predicciones is not None:
         except Exception as e:
             st.error(f"Error al guardar las predicciones: {str(e)}")
             
-        if st.button('Verificar prediciones'):
-            verificar_registros()
+    if st.button('Verificar prediciones'):
+        verificar_registros()
 else:
     st.info('Ingrese los datos y haga clic en "Realizar todas las predicciones"')
