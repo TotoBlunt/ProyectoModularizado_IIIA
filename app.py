@@ -55,8 +55,8 @@ if st.button('Realizar todas las predicciones'):
     
 # Mostrar resultados si existen
 if st.session_state.predicciones is not None:
-    st.write("Resultados de las predicciones:")
-    st.dataframe(st.session_state.predicciones)
+    #st.write("Resultados de las predicciones:")
+    #st.dataframe(st.session_state.predicciones)
     
     # Botón para guardar predicciones
     if st.button('Guardar predicciones'):
