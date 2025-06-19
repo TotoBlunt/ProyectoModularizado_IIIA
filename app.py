@@ -4,6 +4,7 @@ import pandas as pd
 from xgboost import XGBRegressor
 from utils.predicciones import predict_all
 from utils.CRUD import crear_prediccion
+from utils.formateoValoresdicy import formatear_valores
 
 # Configuración inicial de session state
 if 'predicciones' not in st.session_state:
@@ -61,7 +62,7 @@ if st.session_state.predicciones is not None:
     # Botón para guardar predicciones
     if st.button('Guardar predicciones'):
         # Transformar dataframe predicciones a diccionario
-        datos_predichos = round(st.session_state.predicciones.to_dict(orient='records'),4)
+        datos_predichos = formatear_valores(st.session_state.predicciones.to_dict(orient='records'))
         datos_ingresados = {
             'nombre': nombre_user,
             'cargo': cargo_user,
@@ -69,10 +70,10 @@ if st.session_state.predicciones is not None:
             'sexo': sexo,   
             'edadHTs': edadHTs,
             'edadventa': edadventa,
-            'prePorcMort': datos_predichos[0]['Valor'],
-            'prePorcCon': datos_predichos[1]['Valor'],
-            'preICA': datos_predichos[2]['Valor'],
-            'prePeProFin': datos_predichos[3]['Valor']
+            'prePorcMort': datos_predichos[0],
+            'prePorcCon': datos_predichos[1],
+            'preICA': datos_predichos[2],
+            'prePeProFin': datos_predichos[3]
 
         }
         # Concatenar los diccionarios
