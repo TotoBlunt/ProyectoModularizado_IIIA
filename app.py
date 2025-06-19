@@ -72,7 +72,7 @@ if st.session_state.predicciones is not None:
         }
         # Concatenar los diccionarios
         datos_supabase = {**datos_ingresados, **datos_predicciones}
-        
+        st.write("Datos a guardar:", datos_supabase)
         # Guardar las predicciones en la base de datos
         try:
             crear_prediccion(datos_supabase)

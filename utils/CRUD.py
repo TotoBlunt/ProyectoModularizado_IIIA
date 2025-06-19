@@ -17,8 +17,6 @@ def crear_prediccion(predicction_data):
 
         # Insertar datos en Supabase
         # Agrega este código para verificar el esquema de tu tabla
-        response = Client.table('predicciones').select('*').limit(0).execute()
-        st.write("Columnas disponibles:", response.columns)
         response = Client.table('predicciones').insert(predicction_data).execute()
 
         # Mostrar la respuesta completa para depuración (opcional)
