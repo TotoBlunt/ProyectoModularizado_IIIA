@@ -61,7 +61,7 @@ if st.session_state.predicciones is not None:
     # Botón para guardar predicciones
     if st.button('Guardar predicciones'):
         # Transformar dataframe predicciones a diccionario
-        datos_predicciones = st.session_state.predicciones.to_dict(orient='records')[0]
+        datos_predichos = st.session_state.predicciones.to_dict(orient='records')[0]
         datos_ingresados = {
             'nombre': nombre_user,
             'cargo': cargo_user,
@@ -71,7 +71,7 @@ if st.session_state.predicciones is not None:
             'edadventa': edadventa
         }
         # Concatenar los diccionarios
-        datos_supabase = {**datos_ingresados, **datos_predicciones}
+        datos_supabase = {**datos_ingresados, **datos_predichos}
         st.write("Datos a guardar:", datos_prediccion,datos_ingresados)
         # Guardar las predicciones en la base de datos
         try:
