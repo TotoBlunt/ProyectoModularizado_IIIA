@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 from xgboost import XGBRegressor
 from utils.predicciones import predict_all
-from utils.CRUD import crear_prediccion
+from utils.CRUD import crear_prediccion,verificar_registros
 from utils.formateoValoresdicy import formatear_valores
 
 # Configuración inicial de session state
@@ -85,5 +85,8 @@ if st.session_state.predicciones is not None:
             st.success("Predicciones guardadas correctamente en la base de datos!")
         except Exception as e:
             st.error(f"Error al guardar las predicciones: {str(e)}")
+            
+        if st.button('Verificar prediciones'):
+            verificar_registros()
 else:
     st.info('Ingrese los datos y haga clic en "Realizar todas las predicciones"')
