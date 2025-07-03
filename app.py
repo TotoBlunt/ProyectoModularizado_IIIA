@@ -1,7 +1,6 @@
 import joblib
 import streamlit as st
 import pandas as pd
-from xgboost import XGBRegressor
 from utils.predicciones import predict_all
 from utils.CRUD import crear_prediccion, ver_predicciones_guardadas
 from utils.formateoValoresdicy import formatear_valores
@@ -27,13 +26,13 @@ AREA_MAP = {
     'C. metabólico': 7, 'S. Inmunitario': 8
 }
 
-# Columnas requeridas y mapeo personalizado
+# Columnas requeridas y mapeo de reemplazo
 REQUIRED_COLUMNS = ['areaAn', 'sexo', 'edadHTs', 'edadventa']
-COLUMN_MAPPING = {
-    'sexo': 'Sexo',
-    'areaAn': 'Area',
-    'edadHTs': 'Edad HTS',
-    'edadventa': 'Edad Granja'
+COLUMN_REPLACEMENT = {
+    'Sexo': 'sexo',
+    'Area': 'areaAn',
+    'Edad HTS': 'edadHTs',
+    'Edad Granja': 'edadventa'
 }
 
 # Opción para elegir el modo de entrada de datos
@@ -95,15 +94,16 @@ else:  # Modo carga de archivo
             else:
                 df = pd.read_excel(uploaded_file)
             
-            # Renombrar columnas según mapeo
-            df.rename(columns=COLUMN_MAPPING, inplace=True)
+            # Reemplazar nombres de columnas según el mapeo
+            df.rename(columns=COLUMN_REPLACEMENT, inplace=True)
             
             # Validar columnas requeridas
             missing_cols = [col for col in REQUIRED_COLUMNS if col not in df.columns]
             
             if missing_cols:
                 st.error(f"Columnas requeridas faltantes: {', '.join(missing_cols)}")
-                st.error("Por favor, asegúrese que el archivo contenga las columnas necesarias.")
+                st.error("Por favor, asegúrese que el archivo contenga las columnas necesarias con los nombres correctos.")
+                st.info(f"Nombres esperados o sus equivalentes: {list(COLUMN_REPLACEMENT.keys())}")
             else:
                 st.session_state.uploaded_data = df
                 st.success("¡Archivo cargado y validado correctamente!")
