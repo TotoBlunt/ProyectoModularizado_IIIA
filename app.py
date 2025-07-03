@@ -30,10 +30,10 @@ AREA_MAP = {
 # Columnas requeridas y mapeo personalizado
 REQUIRED_COLUMNS = ['areaAn', 'sexo', 'edadHTs', 'edadventa']
 COLUMN_MAPPING = {
-    'Sexo': 'sexo',
-    'Area': 'areaAn',
-    'Edad HTS': 'edadHTs',
-    'Edad Granja': 'edadventa'
+    'sexo': 'Sexo',
+    'areaAn': 'Area',
+    'edadHTs': 'Edad HTS',
+    'edadventa': 'Edad Granja'
 }
 
 # Opción para elegir el modo de entrada de datos
