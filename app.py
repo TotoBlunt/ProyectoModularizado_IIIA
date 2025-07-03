@@ -12,6 +12,8 @@ if 'predicciones' not in st.session_state:
     st.session_state.predicciones = None
 if 'uploaded_data' not in st.session_state:
     st.session_state.uploaded_data = None
+if 'resultados_completos' not in st.session_state:
+    st.session_state.resultados_completos = None
 
 # Configuración de la aplicación
 st.title('Predicción de Parámetros Avícolas')
@@ -25,8 +27,14 @@ AREA_MAP = {
     'C. metabólico': 7, 'S. Inmunitario': 8
 }
 
-# Columnas requeridas para las predicciones
+# Columnas requeridas y mapeo personalizado
 REQUIRED_COLUMNS = ['areaAn', 'sexo', 'edadHTs', 'edadventa']
+COLUMN_MAPPING = {
+    'Sexo': 'sexo',
+    'Area': 'areaAn',
+    'Edad HTS': 'edadHTs',
+    'Edad Granja': 'edadventa'
+}
 
 # Opción para elegir el modo de entrada de datos
 modo_entrada = st.radio("Seleccione el modo de entrada de datos:",
@@ -35,18 +43,18 @@ modo_entrada = st.radio("Seleccione el modo de entrada de datos:",
 if modo_entrada == "Ingreso manual":
     st.subheader('Ingrese los datos manualmente')
     
-    nombre_user = st.text_input('Nombre del usuario')
-    cargo_user = st.text_input('Cargo del usuario')
+    nombre_user = st.text_input('Nombre del usuario*')
+    cargo_user = st.text_input('Cargo del usuario*')
     if not nombre_user or not cargo_user:
         st.warning('Por favor, ingrese su nombre y cargo para continuar.')
 
     col1, col2 = st.columns(2)
     with col1:
-        areaAn = st.selectbox('Área de la granja', list(AREA_MAP.keys()))
-        sexo = st.selectbox('Sexo de los pollos', list(SEXO_MAP.keys()))
+        areaAn = st.selectbox('Área de la granja*', list(AREA_MAP.keys()))
+        sexo = st.selectbox('Sexo de los pollos*', list(SEXO_MAP.keys()))
     with col2:
-        edadHTs = st.selectbox('Edad al sacrificio (días)', [14, 21, 28, 35])
-        edadventa = st.number_input('Edad de venta (días)', min_value=0, max_value=5000, value=1000)
+        edadHTs = st.selectbox('Edad al sacrificio (días)*', [14, 21, 28, 35])
+        edadventa = st.number_input('Edad de venta (días)*', min_value=0, max_value=5000, value=1000)
 
     # Transformación de datos
     datos_prediccion = {
@@ -68,33 +76,37 @@ if modo_entrada == "Ingreso manual":
 else:  # Modo carga de archivo
     st.subheader('Cargue su archivo con los datos')
     
-    nombre_user = st.text_input('Nombre del usuario')
-    cargo_user = st.text_input('Cargo del usuario')
+    nombre_user = st.text_input('Nombre del usuario*')
+    cargo_user = st.text_input('Cargo del usuario*')
     if not nombre_user or not cargo_user:
         st.warning('Por favor, ingrese su nombre y cargo para continuar.')
     
-    uploaded_file = st.file_uploader("Subir archivo (CSV o Excel)", type=['csv', 'xlsx'])
+    uploaded_file = st.file_uploader("Subir archivo (CSV o Excel)*", type=['csv', 'xlsx'])
     
     if uploaded_file is not None:
         try:
             # Leer el archivo según su extensión
             if uploaded_file.name.endswith('.csv'):
-                            # Intentar con UTF-8 primero, si falla usar latin-1
                 try:
                     df = pd.read_csv(uploaded_file, encoding='utf-8')
                 except UnicodeDecodeError:
+                    st.warning("El archivo no está en UTF-8. Usando codificación latin-1...")
                     df = pd.read_csv(uploaded_file, encoding='latin-1')
             else:
                 df = pd.read_excel(uploaded_file)
+            
+            # Renombrar columnas según mapeo
+            df.rename(columns=COLUMN_MAPPING, inplace=True)
             
             # Validar columnas requeridas
             missing_cols = [col for col in REQUIRED_COLUMNS if col not in df.columns]
             
             if missing_cols:
-                st.error(f"El archivo no contiene las columnas requeridas. Faltan: {', '.join(missing_cols)}")
+                st.error(f"Columnas requeridas faltantes: {', '.join(missing_cols)}")
+                st.error("Por favor, asegúrese que el archivo contenga las columnas necesarias.")
             else:
                 st.session_state.uploaded_data = df
-                st.success("Archivo cargado correctamente!")
+                st.success("¡Archivo cargado y validado correctamente!")
                 st.dataframe(df.head())
                 
                 # Transformar datos según mapeos
@@ -115,7 +127,7 @@ else:  # Modo carga de archivo
                         st.dataframe(resultados_completos)
                         
                         # Botón para descargar resultados
-                        csv = resultados_completos.to_csv(index=False).encode('utf-8')
+                        csv = resultados_completos.to_csv(index=False, encoding='utf-8-sig').encode('utf-8-sig')
                         st.download_button(
                             label="Descargar resultados como CSV",
                             data=csv,
@@ -125,7 +137,9 @@ else:  # Modo carga de archivo
                         
                 except Exception as e:
                     st.error(f"Error al transformar los datos: {str(e)}")
-                    st.error("Asegúrese que los valores en las columnas 'areaAn' y 'sexo' coincidan con los valores esperados.")
+                    st.error("""Asegúrese que:
+                    - Los valores en 'Area' coincidan con: Calidad, I. Respiratoria, etc.
+                    - Los valores en 'Sexo' sean: Macho o Hembra""")
         
         except Exception as e:
             st.error(f"Error al leer el archivo: {str(e)}")
