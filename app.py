@@ -79,7 +79,7 @@ else:  # Modo carga de archivo
         try:
             # Leer el archivo según su extensión
             if uploaded_file.name.endswith('.csv'):
-                df = pd.read_csv(uploaded_file)
+                df = pd.read_csv(uploaded_file,delimiter=',')
             else:
                 df = pd.read_excel(uploaded_file)
             
