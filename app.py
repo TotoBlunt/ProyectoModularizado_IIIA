@@ -79,7 +79,11 @@ else:  # Modo carga de archivo
         try:
             # Leer el archivo según su extensión
             if uploaded_file.name.endswith('.csv'):
-                df = pd.read_csv(uploaded_file,delimiter=',',encoding='utf-8')
+                            # Intentar con UTF-8 primero, si falla usar latin-1
+                try:
+                    df = pd.read_csv(uploaded_file, encoding='utf-8')
+                except UnicodeDecodeError:
+                    df = pd.read_csv(uploaded_file, encoding='latin-1')
             else:
                 df = pd.read_excel(uploaded_file)
             
