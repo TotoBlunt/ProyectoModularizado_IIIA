@@ -1,10 +1,10 @@
-import joblib
 import streamlit as st
 import pandas as pd
-from xgboost import XGBRegressor
+from datetime import datetime
 from utils.predicciones import predict_all
-from utils.CRUD import crear_prediccion,ver_predicciones_guardadas
+from utils.CRUD import crear_prediccion, ver_predicciones_guardadas
 from utils.formateoValoresdicy import formatear_valores
+from utils.sharepoint_utils import append_a_excel_existente
 
 # Configuración inicial de session state
 if 'predicciones' not in st.session_state:
@@ -45,47 +45,78 @@ datos_prediccion = {
     'edadventa': edadventa
 }
 
-input_data = [[datos_prediccion['areaAn'], datos_prediccion['sexo'], 
-            datos_prediccion['edadHTs'], datos_prediccion['edadventa']]]
+input_data = [[
+    datos_prediccion['areaAn'],
+    datos_prediccion['sexo'],
+    datos_prediccion['edadHTs'],
+    datos_prediccion['edadventa']
+]]
 
 # Botón para realizar todas las predicciones
 if st.button('Realizar todas las predicciones'):
-    # Realizar predicciones
     st.session_state.predicciones = predict_all(input_data)
     st.success("Predicciones realizadas correctamente!")
-    
+
 # Mostrar resultados si existen
 if st.session_state.predicciones is not None:
-    #st.write("Resultados de las predicciones:")
-    #st.dataframe(st.session_state.predicciones)
-    
-    # Botón para guardar predicciones
-    if st.button('Guardar predicciones'):
-        # Transformar dataframe predicciones a diccionario
-        datos_predichos = formatear_valores(st.session_state.predicciones.to_dict(orient='records'))
-        #Colocar valores manualmente a las predicciones ya que por dafault la clave sale Valor
-        datos_ingresados = {
-            'nombre': nombre_user,
-            'cargo': cargo_user,
-            'areaAn': areaAn,
-            'sexo': sexo,   
-            'edadHTs': edadHTs,
-            'edadventa': edadventa,
-            'prePorcMort': datos_predichos[0],
-            'prePorcCon': datos_predichos[1],
-            'preICA': datos_predichos[2],
-            'prePeProFin': datos_predichos[3]
 
-        }
-        
-        st.write("Datos a guardar:", datos_ingresados, datos_predichos)
-        # Guardar las predicciones en la base de datos
-        try:
-            crear_prediccion(datos_ingresados)
-            st.success("Predicciones guardadas correctamente en la base de datos!")
-        except Exception as e:
-            st.error(f"Error al guardar las predicciones: {str(e)}")
-            
+    datos_predichos = formatear_valores(st.session_state.predicciones.to_dict(orient='records'))
+    datos_ingresados = {
+        'nombre': nombre_user,
+        'cargo': cargo_user,
+        'areaAn': areaAn,
+        'sexo': sexo,
+        'edadHTs': edadHTs,
+        'edadventa': edadventa,
+        'prePorcMort': datos_predichos[0],
+        'prePorcCon': datos_predichos[1],
+        'preICA': datos_predichos[2],
+        'prePeProFin': datos_predichos[3]
+    }
+
+    st.write("Datos a guardar:")
+    st.dataframe(pd.DataFrame([datos_ingresados]))
+
+    st.markdown("### 🔍 Elige dónde guardar los datos")
+    opcion_guardado = st.radio("Destino:", ["Supabase", "SharePoint"])
+
+    if opcion_guardado == "SharePoint":
+        st.markdown("#### 📂 Credenciales de SharePoint")
+        site_url = st.text_input("URL del sitio (ej. https://empresa.sharepoint.com/sites/tu-sitio)")
+        carpeta_relativa = st.text_input("Ruta relativa de carpeta (ej. /sites/tu-sitio/Shared Documents)")
+        username = st.text_input("Correo SharePoint", placeholder="ej. jose@empresa.com")
+        password = st.text_input("Contraseña", type="password")
+
+    if st.button("Guardar predicciones"):
+        if opcion_guardado == "Supabase":
+            try:
+                crear_prediccion(datos_ingresados)
+                st.success("✅ Predicciones guardadas correctamente en Supabase.")
+            except Exception as e:
+                st.error(f"❌ Error al guardar en Supabase: {str(e)}")
+
+        elif opcion_guardado == "SharePoint":
+            try:
+                df = pd.DataFrame([datos_ingresados])
+                st.markdown("#### 📄 Vista previa del archivo a subir:")
+                st.dataframe(df)
+
+                if st.button("📤 Confirmar subida a SharePoint"):
+                    exito, mensaje = append_a_excel_existente(
+                        site_url=site_url,
+                        username=username,
+                        password=password,
+                        carpeta_relativa=carpeta_relativa,
+                        nombre_archivo_destino="predicciones.xlsx",
+                        df_nuevo=df
+                    )
+                    if exito:
+                        st.success(f"✅ {mensaje}")
+                    else:
+                        st.error(f"❌ {mensaje}")
+            except Exception as e:
+                st.error(f"❌ Error inesperado: {str(e)}")
+
     if st.button('Verificar prediciones'):
         ver_predicciones_guardadas()
 else:
