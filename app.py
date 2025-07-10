@@ -4,7 +4,7 @@ from datetime import datetime
 from utils.predicciones import predict_all
 from utils.CRUD import crear_prediccion, ver_predicciones_guardadas
 from utils.formateoValoresdicy import formatear_valores
-from utils.sharepointUtil import append_a_excel_existente
+from utils.sharepointUtill import append_a_excel_existente
 
 # Configuración inicial de session state
 if 'predicciones' not in st.session_state:
