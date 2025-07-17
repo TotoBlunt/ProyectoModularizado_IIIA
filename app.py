@@ -14,7 +14,8 @@ if 'predicciones' not in st.session_state:
 # Configuración de la aplicación
 st.title('🐥 Predicción de Parámetros Avícolas')
 st.subheader('Predicciones de Mortalidad, Consumo, ICA y Peso Promedio Final')
-st.subheader('Ingrese los datos para realizar las predicciones', pd.__version__)
+st.subheader('Ingrese los datos para realizar las predicciones')
+st.sidebar.info(f"📦 Pandas activo: {pd.__version__}")
 
 
 # Mapeos
