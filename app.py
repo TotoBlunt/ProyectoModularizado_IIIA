@@ -136,7 +136,7 @@ if archivo is not None:
     try:
         # Cargar archivo
         if archivo.name.endswith('.csv'):
-            df_subido = pd.read_csv(archivo)
+            df_subido = pd.read_csv(archivo, encoding='latin1')
         else:
             df_subido = pd.read_excel(archivo)
 
