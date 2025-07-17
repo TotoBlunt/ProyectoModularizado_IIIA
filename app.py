@@ -146,10 +146,12 @@ if archivo is not None:
             df_subido = pd.read_csv(archivo, encoding=encoding_detectado)
         else:
             df_subido = pd.read_excel(archivo)
+        df_subido.columns = df_subido.columns.str.strip()  # <- nueva línea para normalizar
 
         columnas_necesarias = ['Sexo', 'Area', 'Edad HTS', 'Edad Granja']
         if not all(col in df_subido.columns for col in columnas_necesarias):
             faltantes = list(set(columnas_necesarias) - set(df_subido.columns))
+            st.write("Columnas detectadas:", df_subido.columns.tolist())  # para depurar
             st.error(f"⚠️ El archivo no contiene las siguientes columnas necesarias: {faltantes}")
         else:
             df_subido['sexo'] = df_subido['Sexo'].map(SEXO_MAP)
