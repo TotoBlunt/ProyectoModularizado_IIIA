@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import chardet
 from utils.predicciones import predict_all
 from utils.CRUD import crear_prediccion, ver_predicciones_guardadas
 from utils.formateoValoresdicy import formatear_valores
@@ -34,7 +35,7 @@ with col1:
     areaAn = st.selectbox('📍 Área de la granja', list(AREA_MAP.keys()))
     sexo = st.selectbox('🐔 Sexo de los pollos', list(SEXO_MAP.keys()))
 with col2:
-    edadHTs = st.selectbox('📆 Edad al sacrificio (días)', [14, 21, 28, 35])
+    edadHTs = st.selectbox('🗖️ Edad al sacrificio (días)', [14, 21, 28, 35])
     edadventa = st.number_input('📦 Edad de venta (días)', min_value=0, max_value=5000, value=1000)
 
 # Transformación de datos
@@ -76,7 +77,7 @@ if st.session_state.predicciones is not None:
     st.write("📊 Datos a guardar:")
     st.dataframe(pd.DataFrame([datos_ingresados]))
 
-    st.markdown("### 💾 Elige dónde guardar los datos")
+    st.markdown("### 📂 Elige dónde guardar los datos")
     opcion_guardado = st.radio("Destino:", ["Supabase", "SharePoint"])
 
     if opcion_guardado == "SharePoint":
@@ -86,7 +87,7 @@ if st.session_state.predicciones is not None:
         username = st.text_input("Correo SharePoint", placeholder="ej. jose@empresa.com")
         password = st.text_input("Contraseña", type="password")
 
-    if st.button("💾 Guardar predicciones"):
+    if st.button("📂 Guardar predicciones"):
         if opcion_guardado == "Supabase":
             try:
                 crear_prediccion(datos_ingresados)
@@ -120,9 +121,9 @@ if st.session_state.predicciones is not None:
 else:
     st.info('Ingrese los datos y haga clic en "Realizar todas las predicciones"')
 
-# ========================================
-# NUEVA SECCIÓN: PREDICCIÓN DESDE ARCHIVO
-# ========================================
+# ============================
+# Predicción desde archivo
+# ============================
 
 st.markdown("---")
 st.markdown("## 📁 Predicción desde archivo CSV o Excel")
@@ -134,36 +135,32 @@ archivo = st.file_uploader("Selecciona tu archivo", type=["csv", "xlsx"])
 
 if archivo is not None:
     try:
-        # Cargar archivo
         if archivo.name.endswith('.csv'):
-            df_subido = pd.read_csv(archivo, encoding='latin1')
+            raw_data = archivo.read()
+            resultado_encoding = chardet.detect(raw_data)
+            encoding_detectado = resultado_encoding['encoding'] or 'latin1'
+            archivo.seek(0)
+            df_subido = pd.read_csv(archivo, encoding=encoding_detectado, errors='ignore')
         else:
             df_subido = pd.read_excel(archivo)
 
-        # Verificar columnas necesarias
         columnas_necesarias = ['Sexo', 'Area', 'Edad HTS', 'Edad Granja']
         if not all(col in df_subido.columns for col in columnas_necesarias):
             faltantes = list(set(columnas_necesarias) - set(df_subido.columns))
             st.error(f"⚠️ El archivo no contiene las siguientes columnas necesarias: {faltantes}")
         else:
-            # Mapear datos según los mapeos definidos
             df_subido['sexo'] = df_subido['Sexo'].map(SEXO_MAP)
             df_subido['areaAn'] = df_subido['Area'].map(AREA_MAP)
             df_subido['edadHTs'] = df_subido['Edad HTS']
             df_subido['edadventa'] = df_subido['Edad Granja']
 
-            # Verificar si hubo algún valor no reconocido
             if df_subido[['sexo', 'areaAn']].isnull().any().any():
                 st.error("⚠️ Hay valores no reconocidos en las columnas 'Sexo' o 'Area'. Verifica que sean válidos.")
             else:
-                # Preparar datos para predicción
                 input_batch = df_subido[['areaAn', 'sexo', 'edadHTs', 'edadventa']].values.tolist()
-
-                # Realizar predicciones
                 resultados = predict_all(input_batch)
                 resultados_format = formatear_valores(resultados.to_dict(orient='records'))
 
-                # Construir DataFrame final con predicciones
                 df_resultado = df_subido[columnas_necesarias].copy()
                 df_resultado['Nombre Usuario'] = nombre_user
                 df_resultado['Cargo Usuario'] = cargo_user
@@ -175,13 +172,13 @@ if archivo is not None:
                 st.success("✅ Predicciones realizadas correctamente para el archivo cargado.")
                 st.dataframe(df_resultado)
 
-                # Botón de descarga
                 csv = df_resultado.to_csv(index=False).encode('utf-8')
                 st.download_button(
-                    label="📥 Descargar resultados como CSV",
+                    label="📅 Descargar resultados como CSV",
                     data=csv,
                     file_name=f"predicciones_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                     mime='text/csv'
                 )
+
     except Exception as e:
         st.error(f"❌ Error al procesar el archivo: {str(e)}")
