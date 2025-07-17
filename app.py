@@ -15,6 +15,7 @@ if 'predicciones' not in st.session_state:
 st.title('🐥 Predicción de Parámetros Avícolas')
 st.subheader('Predicciones de Mortalidad, Consumo, ICA y Peso Promedio Final')
 st.subheader('Ingrese los datos para realizar las predicciones')
+st.write("📦 Versión activa de pandas:", pd.__version__)
 
 # Mapeos
 SEXO_MAP = {'Macho': 1, 'Hembra': 0}
