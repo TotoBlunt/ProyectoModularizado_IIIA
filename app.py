@@ -6,7 +6,7 @@ from utils.predicciones import predict_all
 from utils.CRUD import crear_prediccion, ver_predicciones_guardadas
 from utils.formateoValoresdicy import formatear_valores
 from utils.sharepointUtill import append_a_excel_existente
-
+import io
 # Configuración inicial de session state
 if 'predicciones' not in st.session_state:
     st.session_state.predicciones = None
@@ -135,6 +135,7 @@ st.code("['Sexo', 'Area', 'Edad HTS', 'Edad Granja']")
 
 archivo = st.file_uploader("Selecciona tu archivo", type=["csv", "xlsx"])
 
+
 if archivo is not None:
     try:
         if archivo.name.endswith('.csv'):
@@ -142,7 +143,7 @@ if archivo is not None:
             resultado_encoding = chardet.detect(raw_data)
             encoding_detectado = resultado_encoding['encoding'] or 'latin1'
             archivo.seek(0)
-            df_subido = pd.read_csv(archivo, encoding=encoding_detectado, errors='ignore')
+            df_subido = pd.read_csv(archivo, encoding=encoding_detectado)
         else:
             df_subido = pd.read_excel(archivo)
 
