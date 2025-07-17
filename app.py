@@ -133,7 +133,7 @@ st.markdown("## 📁 Predicción desde archivo CSV o Excel")
 st.markdown("Sube un archivo `.csv` o `.xlsx` con las siguientes columnas obligatorias:")
 st.code("['Sexo', 'Area', 'Edad HTS', 'Edad Granja']")
 
-archivo = st.file_uploader("Selecciona tu archivo", type=["csv", "xlsx"])
+archivo = st.file_uploader("Selecciona tu archivo", type=["csv", "xlsx","xlsm"])
 
 
 if archivo is not None:
