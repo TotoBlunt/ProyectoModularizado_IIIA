@@ -37,8 +37,8 @@ with col1:
     areaAn = st.selectbox('📍 Área de la granja', list(AREA_MAP.keys()))
     sexo = st.selectbox('🐔 Sexo de los pollos', list(SEXO_MAP.keys()))
 with col2:
-    edadHTs = st.selectbox('🗖️ Edad al sacrificio (días)', [14, 21, 28, 35])
-    edadventa = st.number_input('📦 Edad de venta (días)', min_value=0, max_value=5000, value=1000)
+    edadHTs = st.selectbox('🗖️ Edad al sacrificio(HTS) (días)', [14, 21, 28, 35])
+    edadventa = st.number_input('📦 Edad de venta(Granja) (días)', min_value=0, max_value=5000, value=1000)
 
 # Transformación de datos
 datos_prediccion = {
