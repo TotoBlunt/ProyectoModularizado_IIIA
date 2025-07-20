@@ -192,39 +192,30 @@ if archivo is not None:
 
             # --- PASO 5: REALIZAR PREDICCIONES SI NO HAY ERRORES ---
             if not error_encontrado:
-                st.success("✅ Datos validados correctamente. Realizando predicciones...")
+                st.success("✅ Datos validados. Realizando predicciones...")
 
-                # Preparar los datos para el modelo en el orden correcto
-                input_batch = df_procesado[[
-                    'area_num', 
-                    'sexo_num', 
-                    'Edad HTS', 
-                    'Edad Granja'
-                ]].values.tolist()
-
-                # Llamar a tu función de predicción
-                resultados = predict_all(input_batch)
-                resultados_format = formatear_valores(resultados.to_dict(orient='records'))
+                input_batch = df_procesado[['area_num', 'sexo_num', 'Edad HTS', 'Edad Granja']].values.tolist()
                 
-                # Si 'resultados_format' no está vacío y su primer elemento NO es una lista (es un float/int),
-                # significa que es el resultado de una sola fila. Lo envolvemos en una lista.
-                if resultados_format and not isinstance(resultados_format[0], (list, tuple)):
-                    resultados_format = [resultados_format]
+                # 1. Llamar a la función predict_all, que devuelve un DataFrame
+                resultados_df = predict_all(input_batch)
 
-                # Crear el DataFrame final con los resultados
+                # 2. YA NO SE USA formatear_valores
+
+                # 3. Crear el DataFrame final
                 df_resultado = df_subido[columnas_necesarias].copy()
                 df_resultado['Nombre Usuario'] = nombre_user if nombre_user else "No especificado"
                 df_resultado['Cargo Usuario'] = cargo_user if cargo_user else "No especificado"
-                df_resultado['prePorcMort'] = [r[0] for r in resultados_format]
-                df_resultado['prePorcCon'] = [r[1] for r in resultados_format]
-                df_resultado['preICA'] = [r[2] for r in resultados_format]
-                df_resultado['prePeProFin'] = [r[3] for r in resultados_format]
+                
+                # 4. Asignar las columnas directamente desde el DataFrame de resultados
+                df_resultado['prePorcMort'] = resultados_df['prePorcMort']
+                df_resultado['prePorcCon'] = resultados_df['prePorcCon']
+                df_resultado['preICA'] = resultados_df['preICA']
+                df_resultado['prePeProFin'] = resultados_df['prePeProFin']
 
                 st.markdown("---")
                 st.subheader("📈 Resultados de la Predicción")
                 st.dataframe(df_resultado)
 
-                # Opción para descargar los resultados
                 csv = df_resultado.to_csv(index=False).encode('utf-8')
                 st.download_button(
                     label="📥 Descargar resultados como CSV",
@@ -232,6 +223,5 @@ if archivo is not None:
                     file_name=f"predicciones_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                     mime='text/csv'
                 )
-
     except Exception as e:
-        st.error(f"❌ Ocurrió un error inesperado al procesar el archivo: {str(e)}")
+        st.error(f"❌ Ocurrió un error inesperado al procesar el archivo: {e}")
