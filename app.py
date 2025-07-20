@@ -203,6 +203,11 @@ if archivo is not None:
                 # Llamar a tu función de predicción
                 resultados = predict_all(input_batch)
                 resultados_format = formatear_valores(resultados.to_dict(orient='records'))
+                
+                # Si 'resultados_format' no está vacío y su primer elemento NO es una lista (es un float/int),
+                # significa que es el resultado de una sola fila. Lo envolvemos en una lista.
+                if resultados_format and not isinstance(resultados_format[0], (list, tuple)):
+                    resultados_format = [resultados_format]
 
                 # Crear el DataFrame final con los resultados
                 df_resultado = df_subido[columnas_necesarias].copy()
