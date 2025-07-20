@@ -19,7 +19,7 @@ st.subheader('Ingrese los datos para realizar las predicciones')
 
 
 # Mapeos
-SEXO_MAP = {'Macho': 1, 'Hembra': 0}
+SEXO_MAP = {'Ma': 1, 'He': 0}
 AREA_MAP = {
     'Calidad': 1, 'I. Respiratoria': 2, 'S. esquelético': 3,
     'I. Intestinal': 4, 'Coccidia': 5, 'C. tóxico': 6,
