@@ -128,62 +128,103 @@ else:
 # ============================
 
 st.markdown("---")
-st.markdown("## 📁 Predicción desde archivo CSV o Excel")
+st.header("2. Predicción desde Archivo")
+st.subheader("Sube un archivo `.csv` o `.xlsx` para predicciones en lote")
 
-st.markdown("Sube un archivo `.csv` o `.xlsx` con las siguientes columnas obligatorias:")
-st.code("['Sexo', 'Area', 'Edad HTS', 'Edad Granja']")
+st.markdown("El archivo debe contener las siguientes columnas obligatorias:")
+st.code("Sexo, Area, Edad HTS, Edad Granja")
 
-archivo = st.file_uploader("Selecciona tu archivo", type=["csv", "xlsx","xlsm"])
-
+archivo = st.file_uploader("Selecciona tu archivo", type=["csv", "xlsx", "xlsm"])
 
 if archivo is not None:
     try:
+        # --- PASO 1: LEER EL ARCHIVO DE FORMA SEGURA ---
         if archivo.name.endswith('.csv'):
+            # Detección de codificación para evitar errores con caracteres especiales
             raw_data = archivo.read()
             resultado_encoding = chardet.detect(raw_data)
             encoding_detectado = resultado_encoding['encoding'] or 'latin1'
-            archivo.seek(0)
+            archivo.seek(0) # Volver al inicio del archivo para que pandas pueda leerlo
             df_subido = pd.read_csv(archivo, encoding=encoding_detectado)
         else:
             df_subido = pd.read_excel(archivo)
-        df_subido.columns = df_subido.columns.str.strip()  # <- nueva línea para normalizar
 
+        st.markdown("#### ✅ Archivo cargado correctamente. Vista previa de los datos:")
+        st.dataframe(df_subido.head())
+
+        # --- PASO 2: VALIDAR Y LIMPIAR EL DATAFRAME ---
+        # Normalizar nombres de columnas (eliminar espacios extra)
+        df_subido.columns = df_subido.columns.str.strip()
+        
+        # Verificar que todas las columnas necesarias existan
         columnas_necesarias = ['Sexo', 'Area', 'Edad HTS', 'Edad Granja']
-        if not all(col in df_subido.columns for col in columnas_necesarias):
-            faltantes = list(set(columnas_necesarias) - set(df_subido.columns))
-            st.write("Columnas detectadas:", df_subido.columns.tolist())  # para depurar
-            st.error(f"⚠️ El archivo no contiene las siguientes columnas necesarias: {faltantes}")
-        else:
-            df_subido['sexo'] = df_subido['Sexo'].map(SEXO_MAP)
-            df_subido['areaAn'] = df_subido['Area'].map(AREA_MAP)
-            df_subido['edadHTs'] = df_subido['Edad HTS']
-            df_subido['edadventa'] = df_subido['Edad Granja']
+        columnas_faltantes = [col for col in columnas_necesarias if col not in df_subido.columns]
 
-            if df_subido[['sexo', 'areaAn']].isnull().any().any():
-                st.error("⚠️ Hay valores no reconocidos en las columnas 'Sexo' o 'Area'. Verifica que sean válidos.")
-            else:
-                input_batch = df_subido[['areaAn', 'sexo', 'edadHTs', 'edadventa']].values.tolist()
+        if columnas_faltantes:
+            st.error(f"❌ Error: Faltan las siguientes columnas en el archivo: **{', '.join(columnas_faltantes)}**")
+        else:
+            # Crear una copia para no alterar el dataframe original que se muestra
+            df_procesado = df_subido.copy()
+
+            # Limpiar los datos de las columnas de texto ANTES de mapear
+            df_procesado['Sexo'] = df_procesado['Sexo'].astype(str).str.strip()
+            df_procesado['Area'] = df_procesado['Area'].astype(str).str.strip()
+
+            # --- PASO 3: APLICAR EL MAPEO ---
+            df_procesado['sexo_num'] = df_procesado['Sexo'].map(SEXO_MAP)
+            df_procesado['area_num'] = df_procesado['Area'].map(AREA_MAP)
+
+            # --- PASO 4: VALIDACIÓN DETALLADA POST-MAPEO ---
+            error_encontrado = False
+            # Verificar si hay valores nulos en 'sexo_num' (significa que un valor no se pudo mapear)
+            if df_procesado['sexo_num'].isnull().any():
+                st.error(f"❌ Error en la columna 'Sexo'. Se encontraron valores no reconocidos.")
+                st.info(f"Valores válidos para 'Sexo': **{list(SEXO_MAP.keys())}**. Revisa tu archivo.")
+                error_encontrado = True
+            
+            # Verificar si hay valores nulos en 'area_num'
+            if df_procesado['area_num'].isnull().any():
+                st.error(f"❌ Error en la columna 'Area'. Se encontraron valores no reconocidos.")
+                st.info(f"Valores válidos para 'Area': **{list(AREA_MAP.keys())}**. Revisa tu archivo.")
+                error_encontrado = True
+
+            # --- PASO 5: REALIZAR PREDICCIONES SI NO HAY ERRORES ---
+            if not error_encontrado:
+                st.success("✅ Datos validados correctamente. Realizando predicciones...")
+
+                # Preparar los datos para el modelo en el orden correcto
+                input_batch = df_procesado[[
+                    'area_num', 
+                    'sexo_num', 
+                    'Edad HTS', 
+                    'Edad Granja'
+                ]].values.tolist()
+
+                # Llamar a tu función de predicción
                 resultados = predict_all(input_batch)
                 resultados_format = formatear_valores(resultados.to_dict(orient='records'))
 
+                # Crear el DataFrame final con los resultados
                 df_resultado = df_subido[columnas_necesarias].copy()
-                df_resultado['Nombre Usuario'] = nombre_user
-                df_resultado['Cargo Usuario'] = cargo_user
+                df_resultado['Nombre Usuario'] = nombre_user if nombre_user else "No especificado"
+                df_resultado['Cargo Usuario'] = cargo_user if cargo_user else "No especificado"
                 df_resultado['prePorcMort'] = [r[0] for r in resultados_format]
                 df_resultado['prePorcCon'] = [r[1] for r in resultados_format]
                 df_resultado['preICA'] = [r[2] for r in resultados_format]
                 df_resultado['prePeProFin'] = [r[3] for r in resultados_format]
 
-                st.success("✅ Predicciones realizadas correctamente para el archivo cargado.")
+                st.markdown("---")
+                st.subheader("📈 Resultados de la Predicción")
                 st.dataframe(df_resultado)
 
+                # Opción para descargar los resultados
                 csv = df_resultado.to_csv(index=False).encode('utf-8')
                 st.download_button(
-                    label="📅 Descargar resultados como CSV",
+                    label="📥 Descargar resultados como CSV",
                     data=csv,
                     file_name=f"predicciones_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv",
                     mime='text/csv'
                 )
 
     except Exception as e:
-        st.error(f"❌ Error al procesar el archivo: {str(e)}")
+        st.error(f"❌ Ocurrió un error inesperado al procesar el archivo: {str(e)}")
