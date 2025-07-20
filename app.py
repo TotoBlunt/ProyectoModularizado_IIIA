@@ -72,10 +72,10 @@ if st.session_state.predicciones is not None:
         'sexo': sexo,
         'edadHTs': edadHTs,
         'edadventa': edadventa,
-        'prePorcMort': resultados_df['prePorcMort'].iloc[0], # .iloc[0] para obtener el primer (y único) valor
-        'prePorcCon': resultados_df['prePorcCon'].iloc[0],
-        'preICA': resultados_df['preICA'].iloc[0],
-        'prePeProFin': resultados_df['prePeProFin'].iloc[0]
+        'prePorcMort': float(resultados_df['prePorcMort'].iloc[0]), # .iloc[0] para obtener el primer (y único) valor
+        'prePorcCon': float(resultados_df['prePorcCon'].iloc[0]),
+        'preICA': float(resultados_df['preICA'].iloc[0]),
+        'prePeProFin': float(resultados_df['prePeProFin'].iloc[0])
     }
 
     st.write("📊 Datos a guardar:")
