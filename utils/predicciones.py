@@ -4,10 +4,10 @@ import pandas as pd
 from xgboost import XGBRegressor
 
 # Cargar modelos
-model_porcMort = joblib.load('modelosPkl/model_porcMort.pkl')
-model_porcConsumo = joblib.load('modelosPkl/model_porcConsumo.pkl')
-model_ica = joblib.load('modelosPkl/model_ica.pkl')
-model_pesoProm = joblib.load('modelosPkl/model_pesoProm.pkl')
+model_porcMort = joblib.load('modelosPkl/model_porcMort2.pkl')
+model_porcConsumo = joblib.load('modelosPkl/model_porcConsumo2.pkl')
+model_ica = joblib.load('modelosPkl/model_ica2.pkl')
+model_pesoProm = joblib.load('modelosPkl/model_pesoProm2.pkl')
 
 # Funciones de predicción
 def predict_porcMort(X):
