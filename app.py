@@ -4,7 +4,7 @@ from datetime import datetime
 import chardet
 from utils.predicciones import predict_all
 from utils.CRUD import crear_prediccion, ver_predicciones_guardadas
-from utils.formateoValoresdicy import formatear_valores
+#from utils.formateoValoresdicy import formatear_valores
 from utils.sharepointUtill import append_a_excel_existente
 import io
 # Configuración inicial de session state
@@ -62,7 +62,9 @@ if st.button('🔮 Realizar todas las predicciones'):
 
 # Mostrar resultados si existen
 if st.session_state.predicciones is not None:
-    datos_predichos = formatear_valores(st.session_state.predicciones.to_dict(orient='records'))
+    # Obtenemos el DataFrame de resultados (de 1 fila)
+    resultados_df = st.session_state.predicciones
+    # Creamos el diccionario de datos directamente desde el DataFrame
     datos_ingresados = {
         'nombre': nombre_user,
         'cargo': cargo_user,
@@ -70,10 +72,10 @@ if st.session_state.predicciones is not None:
         'sexo': sexo,
         'edadHTs': edadHTs,
         'edadventa': edadventa,
-        'prePorcMort': datos_predichos[0],
-        'prePorcCon': datos_predichos[1],
-        'preICA': datos_predichos[2],
-        'prePeProFin': datos_predichos[3]
+        'prePorcMort': resultados_df['prePorcMort'].iloc[0], # .iloc[0] para obtener el primer (y único) valor
+        'prePorcCon': resultados_df['prePorcCon'].iloc[0],
+        'preICA': resultados_df['preICA'].iloc[0],
+        'prePeProFin': resultados_df['prePeProFin'].iloc[0]
     }
 
     st.write("📊 Datos a guardar:")
