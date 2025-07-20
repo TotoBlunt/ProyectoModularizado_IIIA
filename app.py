@@ -67,17 +67,9 @@ if st.session_state.predicciones is not None:
     resultados_df = st.session_state.predicciones
     
     # --- INICIO DE LA MODIFICACIÓN PARA LA FECHA ---
-    try:
-        zona_horaria_local = pytz.timezone('America/Lima') # ¡Asegúrate de que esta sea tu zona!
-    except pytz.UnknownTimeZoneError:
-        st.error("Zona horaria no reconocida. Usando UTC por defecto.")
-        zona_horaria_local = pytz.utc
-
-    # 2. Obtiene la fecha y hora actual en esa zona horaria
+    #  GENERAR LA FECHA EN FORMATO ISO
+    zona_horaria_local = pytz.timezone('America/Lima') # O tu zona horaria
     ahora_en_zona_local = datetime.now(zona_horaria_local)
-
-    # 3. Convierte la fecha a formato ISO 8601. 
-    #    ¡Este es el único cambio! Python lo hace automáticamente.
     fecha_iso = ahora_en_zona_local.isoformat()
     
     # Creamos el diccionario de datos directamente desde el DataFrame
