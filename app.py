@@ -128,7 +128,7 @@ else:
 # ============================
 
 st.markdown("---")
-st.header("2. Predicción desde Archivo")
+st.header("Predicción desde Archivo")
 st.subheader("Sube un archivo `.csv` o `.xlsx` para predicciones en lote")
 
 st.markdown("El archivo debe contener las siguientes columnas obligatorias:")
