@@ -36,7 +36,7 @@ if not nombre_user or not cargo_user:
 col1, col2 = st.columns(2)
 with col1:
     areaAn = st.selectbox('📍 Área de la granja', list(AREA_MAP.keys()))
-    sexo = st.selectbox('🐔 Sexo de los pollos', list(SEXO_MAP.keys()))
+    sexo = st.selectbox('🐔 Sexo de los pollos', list(SEXO_MAP.keys()), format_func=lambda x: {'Ma': 'Macho', 'He': 'Hembra'}.get(x, x))
 with col2:
     edadHTs = st.selectbox('🗖️ Edad al sacrificio(HTS) (días)', [14, 21, 28, 35])
     edadventa = st.number_input('📦 Edad de venta(Granja) (días)', min_value=0, max_value=5000, value=1000)
