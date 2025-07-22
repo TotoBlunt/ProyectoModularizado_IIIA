@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+from datetime import datetime,timedelta
 import chardet
 from utils.predicciones import predict_all
 from utils.CRUD import crear_prediccion, ver_predicciones_guardadas
@@ -67,14 +67,21 @@ if st.session_state.predicciones is not None:
     resultados_df = st.session_state.predicciones
     
     # --- INICIO DE LA MODIFICACIÓN PARA LA FECHA ---
-    #  GENERAR LA FECHA EN FORMATO ISO
-    zona_horaria_local = pytz.timezone('America/Lima') # O tu zona horaria
-    ahora_en_zona_local = datetime.now(zona_horaria_local)
-    fecha_iso = ahora_en_zona_local.isoformat()
+    # 1. Obtener la hora actual en UTC
+    ahora_utc = datetime.now(pytz.utc)
+
+    # 2. Definir el desfase que quieres restar (5 horas)
+    desfase = timedelta(hours=5)
+
+    # 3. Realizar la resta matemática
+    hora_local_calculada = ahora_utc - desfase
+
+    # 4. Formatear el resultado como un texto limpio
+    fecha_formateada_manual = hora_local_calculada.strftime('%Y-%m-%d %H:%M')
     
     # Creamos el diccionario de datos directamente desde el DataFrame
     datos_ingresados = {
-        'created_at': fecha_iso,
+        'created_at': fecha_formateada_manual,
         'nombre': nombre_user,
         'cargo': cargo_user,
         'areaAn': areaAn,
