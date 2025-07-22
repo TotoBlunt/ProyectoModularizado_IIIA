@@ -68,16 +68,16 @@ pip install -r requirements.txt
 ```
 ### 4. Configurar Variables de Entorno
 Para conectarse a Supabase, la aplicación necesita credenciales que no deben estar escritas directamente en el código.
-1.Crea un archivo llamado .env en la raíz del proyecto.
-2.Copia el contenido del archivo .env.example (si no lo tienes, usa esta plantilla) y pégalo en tu nuevo archivo .env:
+   1. Crea un archivo llamado .env en la raíz del proyecto.
+   2. Copia el contenido del archivo .env.example (si no lo tienes, usa esta plantilla) y pégalo en tu nuevo archivo .env:
 ```bash
 # .env
 SUPABASE_URL="TU_URL_DEL_PROYECTO_SUPABASE"
 SUPABASE_KEY="TU_CLAVE_ANON_PUBLIC_DE_SUPABASE"
 ```
-3.Reemplaza los valores con tus credenciales reales de supabase.
-Importante: Asegúrate de que tu archivo .gitignore contenga la línea venv/ y .env para no subir el entorno virtual ni tus credenciales secretas a GitHub.
-O ingresa las credenciales directamente en la plataforma de Streamlit(Secrets)
+   3. Reemplaza los valores con tus credenciales reales de supabase.
+   Importante: Asegúrate de que tu archivo .gitignore contenga la línea venv/ y .env para no subir el entorno virtual ni tus credenciales secretas a GitHub.
+   O ingresa las credenciales directamente en la plataforma de Streamlit(Secrets)
 
 ### 5.Ejecutar Aplicación
 Una vez instaladas las dependencias y configurado el entorno, inicia la aplicación con Streamlit:
@@ -89,16 +89,16 @@ streamlit run tu_archivo_principal.py
 ## 📈 Uso de la Aplicación
 
 ### Predicción Manual
-1.Ingresa tu nombre y cargo.
-2.Selecciona los parámetros del lote (Área, Sexo, Edad HTS, etc.) en los formularios.
-3.Haz clic en "Realizar Predicción Manual".
-4.Los resultados aparecerán en pantalla.
-5.Selecciona "Supabase" o "Sharepoint" como destino y haz clic en "Guardar predicciones" para almacenar el registro.
+   1. Ingresa tu nombre y cargo.
+   2. Selecciona los parámetros del lote (Área, Sexo, Edad HTS, etc.) en los formularios.
+   3. Haz clic en "Realizar Predicción Manual".
+   4. Los resultados aparecerán en pantalla.
+   5. Selecciona "Supabase" o "Sharepoint" como destino y haz clic en "Guardar predicciones" para almacenar el registro.
 ### Predicción por Archivo
-1.En la sección "Predicción desde Archivo", haz clic en "Selecciona tu archivo".
-2.Sube un archivo CSV o Excel que contenga las columnas obligatorias: Sexo, Area, Edad HTS, Edad Granja.
-3.La aplicación procesará el archivo y mostrará una tabla con los resultados.
-4.Haz clic en "Descargar resultados como CSV" para guardar el archivo con las predicciones.
+   1. En la sección "Predicción desde Archivo", haz clic en "Selecciona tu archivo".
+   2. Sube un archivo CSV o Excel que contenga las columnas obligatorias: Sexo, Area, Edad HTS, Edad Granja.
+   3. La aplicación procesará el archivo y mostrará una tabla con los resultados.
+   4. Haz clic en "Descargar resultados como CSV" para guardar el archivo con las predicciones.
 
 ## 🗃️ Estructura del Proyecto
 ```bash
