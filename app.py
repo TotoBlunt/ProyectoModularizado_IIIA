@@ -229,10 +229,11 @@ if archivo is not None:
                 df_resultado['prePorcCon'] = resultados_df['prePorcCon']
                 df_resultado['preICA'] = resultados_df['preICA']
                 df_resultado['prePeProFin'] = resultados_df['prePeProFin']
-
+                #5. valores unicos de galponb
+                df_resultado_unico = df_resultado.drop_duplicates(subset=['Galpon'], keep='first')
                 st.markdown("---")
                 st.subheader("📈 Resultados de la Predicción")
-                st.dataframe(df_resultado)
+                st.dataframe(df_resultado_unico)
 
                 csv = df_resultado.to_csv(index=False).encode('utf-8')
                 st.download_button(
