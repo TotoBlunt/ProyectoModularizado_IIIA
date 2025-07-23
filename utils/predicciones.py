@@ -57,14 +57,23 @@ def predict_all(data_batch):
     pred_ica = model_ica.predict(input_array)
     pred_peso = model_pesoProm.predict(input_array)
 
+    # **NUEVO: Redondear las predicciones a 2 decimales**
+    # Usamos np.round() para redondear los arrays de predicciones.
+    pred_mort_redondeado = np.round(pred_mort, 2)
+    pred_consumo_redondeado = np.round(pred_consumo, 3)
+    pred_ica_redondeado = np.round(pred_ica, 2)
+    pred_peso_redondeado = np.round(pred_peso, 3)
+
     # --- 4. CREACIÓN DEL DATAFRAME DE RESULTADOS ---
     # Creamos un diccionario donde cada clave es el nombre de la columna
-    # y cada valor es la lista COMPLETA de predicciones.
+    # y cada valor es la lista COMPLETA de predicciones redondeadas.
     resultados_df = pd.DataFrame({
-        'prePorcMort': pred_mort,
-        'prePorcCon': pred_consumo,
-        'preICA': pred_ica,
-        'prePeProFin': pred_peso
+        'prePorcMort': pred_mort_redondeado,
+        'prePorcCon': pred_consumo_redondeado,
+        'preICA': pred_ica_redondeado,
+        'prePeProFin': pred_peso_redondeado
     })
+
+
 
     return resultados_df
