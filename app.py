@@ -221,6 +221,7 @@ if archivo is not None:
                 df_resultado = df_subido[columnas_necesarias].copy()
                 df_resultado['Nombre Usuario'] = nombre_user if nombre_user else "No especificado"
                 df_resultado['Cargo Usuario'] = cargo_user if cargo_user else "No especificado"
+                df_resultado['Galpon'] = df_subido['Galpon']
                 
                 # 4. Asignar las columnas directamente desde el DataFrame de resultados
                 df_resultado['prePorcMort'] = resultados_df['prePorcMort']
