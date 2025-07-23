@@ -229,7 +229,10 @@ if archivo is not None:
                 df_resultado['prePorcCon'] = resultados_df['prePorcCon']
                 df_resultado['preICA'] = resultados_df['preICA']
                 df_resultado['prePeProFin'] = resultados_df['prePeProFin']
-                #5. valores unicos de galponb
+
+                # 5. Eliminando columnas innecesarias
+                df_resultado = df_resultado.drop(columns=['area', 'sexo'])
+                # 6. valores unicos de galponb
                 df_resultado_unico = df_resultado.drop_duplicates(subset=['Galpon'], keep='first')
                 st.markdown("---")
                 st.subheader("📈 Resultados de la Predicción")
