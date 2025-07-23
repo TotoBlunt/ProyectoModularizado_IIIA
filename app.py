@@ -235,7 +235,7 @@ if archivo is not None:
                 st.subheader("📈 Resultados de la Predicción")
                 st.dataframe(df_resultado_unico)
 
-                csv = df_resultado.to_csv(index=False).encode('utf-8')
+                csv = df_resultado_unico.to_csv(index=False).encode('utf-8')
                 st.download_button(
                     label="📥 Descargar resultados como CSV",
                     data=csv,
