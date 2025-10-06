@@ -68,11 +68,7 @@ def predict(input_data_dict):
 # INTERFAZ STREAMLIT
 # ====================================================================
 
-st.set_page_config(
-    page_title="Predictor MLP Multisalida",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+#st.set_page_config(page_title="Predictor MLP Multisalida",layout="wide",initial_sidebar_state="expanded")
 
 # Título y descripción
 st.title("🧠 Predictor de Rendimiento Acuícola con Redes Neuronales")
