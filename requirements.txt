@@ -77,3 +77,7 @@ openpyxl
 Office365-REST-Python-Client
 chardet
 pytz
+tenacity==9.1.2
+tensorboard==2.20.0
+tensorboard-data-server==0.7.2
+tensorflow==2.20.0
