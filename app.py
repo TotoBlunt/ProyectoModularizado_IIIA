@@ -2,10 +2,10 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime,timedelta
 import chardet
-from utils.predicciones import predict_all
-from utils.CRUD import crear_prediccion, ver_predicciones_guardadas
+from src.utils.predicciones import predict_all
+from src.utils.CRUD import crear_prediccion, ver_predicciones_guardadas
 #from utils.formateoValoresdicy import formatear_valores
-from utils.sharepointUtill import append_a_excel_existente
+from src.utils.sharepointUtill import append_a_excel_existente
 import io
 import pytz
 # Configuración inicial de session state
