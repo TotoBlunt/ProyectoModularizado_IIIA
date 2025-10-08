@@ -10,10 +10,10 @@ import numpy as np
 # Usamos un bloque try-except para dar un error claro si los archivos no se encuentran.
 
 try:
-    model_porcMort = joblib.load('modelosPkl/model_porcMort2.pkl')
-    model_porcConsumo = joblib.load('modelosPkl/model_porcConsumo2.pkl')
-    model_ica = joblib.load('modelosPkl/model_ica2.pkl')
-    model_pesoProm = joblib.load('modelosPkl/model_pesoProm2.pkl')
+    model_porcMort = joblib.load('modelosPkl/ML_models/model_porcMort2.pkl')
+    model_porcConsumo = joblib.load('modelosPkl/ML_models/model_porcConsumo2.pkl')
+    model_ica = joblib.load('modelosPkl/ML_models/model_ica2.pkl')
+    model_pesoProm = joblib.load('modelosPkl/ML_models/model_pesoProm2.pkl')
 except FileNotFoundError as e:
     print(f"ERROR: No se pudo encontrar un archivo de modelo. {e}")
     print("Asegúrate de que los archivos .pkl estén en la carpeta 'modelosPkl/'.")
