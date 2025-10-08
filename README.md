@@ -103,7 +103,7 @@ streamlit run tu_archivo_principal.py
 ## 🗃️ Estructura del Proyecto
 ```bash
 .
-├── tu_archivo_principal.py    # Script principal de Streamlit
+├── app.py    # Script principal de Streamlit
 ├── modelosPkl/                # Carpeta donde se guardan los modelos .pkl/.joblib
 │   ├── modelo_ica2.pkl
 │   ├── modelo_pesoProm2.pkl
