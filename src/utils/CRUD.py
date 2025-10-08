@@ -1,5 +1,5 @@
 import supabase
-from utils.conexionBD import init_supabase
+from src.utils.conexionBD import init_supabase
 import os
 import streamlit as st
 import json
